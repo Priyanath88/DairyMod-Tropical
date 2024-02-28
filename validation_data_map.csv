@@ -1,0 +1,17 @@
+DatasetID,Pasture,Lat,Long,Reference,Location,Accuracy
+1,Brachiaria Mulato II,9.572,-84.241,CIAT (2204),"Atenas, Costa Rica",0.75
+2,Brachiaria Mulato II,-22.5615,-47.4018,Pequeno (2014),"São Paulo, Brazil ",0.56
+3,Brachiaria Mulato II,29.6516,-82.3248,Moreno (2017),"Gainesville Florida, USA",0.77
+4,Brachiaria Mulato II,30.8667,-85.1833,Vendramini et al (2012),"Gainesville Florida, USA",0.98
+5,Gatton Panic,-22.7016,-47.5082,Lara et al (2012),"São Paulo, Brazil ",0.95
+6,Gatton Panic,-21.9617,-47.8411,Araujo et al (2013),"São Carlos, Brazil",0.81
+7,Gatton Panic,-35.7167,142.2744,Descheemaeker et al (2014),"Hopetoun, Victoria, Australia",0.83
+8,Gatton Panic,-1.1225,-47.6075,Macedo et al (2021),"Igarap´e-Açu, Brazil",0.76
+9,Rhodes Reclaimer,-31.2667,150.8667,Boschma et al (2017),"Duri, Tamworth,  Australia",0.64
+10,Brachiaria Mulato II,-0.2222,-79.2608,Garay et al (2017),"Campus Santo Domingo, Ecuador",0.82
+11,Gatton Panic,-30.3427,115.5391,More et al (2014),"Badgingarra Research station, Australia",0.13
+12,Rhodes Reclaimer,-30.3427,115.5391,More et al (2014),"Badgingarra Research station, Australia",0.19
+13,Rhodes Reclaimer,-34.0002,116.6369,More et al (2014),"Kojonup, Australia",0.56
+14,Brachiaria Mulato II,-9.2044,34.9177,Korir et al (2021),"Ikuna, Tanzania",0.81
+15,Rhodes Reclaimer,32.80667,-115.44544,Bachie (2018),"Meloland, USA",0.44
+16,Rhodes Reclaimer,-19.98789,119.96216,"Paynter (Unpublished data, 2022)","Pardoo, Australia",0.54
