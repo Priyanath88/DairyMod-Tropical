@@ -1,0 +1,278 @@
+---
+title: "Model validation"
+author: "Priyanath 2022"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+ 
+Load model validation data set
+
+
+ 
+```{r}
+Validation_data<-read.csv(file = "/Users/Priya/Documents/OneDrive Massey Lap 09 Sep 2023/Thesis chapeters/DairyMod modelling chapter/Validation_dataset.csv")
+Validation_data
+
+library(dplyr)
+library(tidyverse)
+library(emmeans)
+library(scales)
+
+BM_validation<- filter(Validation_data,Pasture=="BM")
+BM_validation
+
+GP_validation<- filter(Validation_data, Pasture=="GP")
+GP_validation
+
+RR_validation<-filter(Validation_data, Pasture=="RR")
+RR_validation
+```
+
+
+
+
+
+```{r fig.height=6, fig.width=8}
+library(ggplot2)
+library(ggpmisc)
+library(ggpubr)
+library(scales)
+library(viridis)
+library(viridisLite)
+
+BM_validation_plot <-ggplot(BM_validation, aes(Modelled, Observed )) + ylim(0,10000) + xlim(0, 10000)+  xlab(bquote('Simulated ('*kg~ha^-1*')')) + ylab(bquote('Measured ('*kg~ha^-1*')')) + scale_fill_discrete(name ="validation data")+ stat_poly_eq(formula = y~x,aes(label = paste(..eq.label.., ..rr.label.., sep = "*plain(\",\")~" ), size=30 ), parse = TRUE)+         
+  geom_smooth(method = "lm",colour = "black",se = FALSE )+ geom_abline(linetype= "dashed")+        
+  geom_point(aes(colour =BM_validation$Dataset), size=5,shape=16, alpha=0.8)+ scale_fill_viridis_c()+
+  theme(text =element_text(size = 13), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets")) + theme(legend.position = c(0.8, 0.22))+ scale_colour_viridis_d()
+
+BM_validation_plot
+
+
+
+GP_validation_plot <-ggplot(GP_validation, aes(Modelled, Observed)) + ylim(0,10000) + xlim(0, 10000)+  xlab(bquote('Simulated ('*kg~ha^-1*')')) + ylab(bquote('Measured ('*kg~ha^-1*')')) + scale_fill_discrete(name ="validation data")+ stat_poly_eq(formula = y~x,aes(label = paste(..eq.label.., ..rr.label.., sep = "*plain(\",\")~" ), size=30 ), parse = TRUE)+         
+  geom_smooth(method = "lm",colour = "black",se = FALSE )+ geom_abline(linetype= "dashed")+        
+  geom_point(aes(colour =GP_validation$Dataset), size=5,shape=17, alpha=0.8)+ 
+  theme(text =element_text(size = 13), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets")) + theme(legend.position = c(0.8, 0.2))+ scale_colour_viridis_d(option = "plasma")
+
+GP_validation_plot
+
+
+RR_validation_plot <-ggplot(RR_validation, aes(Modelled, Observed )) + ylim(0,10000) + xlim(0, 10000)+  xlab(bquote('Simulated ('*kg~ha^-1*')')) + ylab(bquote('Measured ('*kg~ha^-1*')')) + scale_fill_discrete(name ="validation data")+ stat_poly_eq(formula = y~x,aes(label = paste(..eq.label.., ..rr.label.., sep = "*plain(\",\")~" ), size=30 ), parse = TRUE)+         
+  geom_smooth(method = "lm",colour = "black",se = FALSE )+ geom_abline(linetype= "dashed")+        
+  geom_point(aes(colour =RR_validation$Dataset), size=5,shape=18, alpha=0.8)+ 
+  theme(text =element_text(size = 13), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets"))+ theme(legend.position = c(0.8, 0.2)) + 
+  scale_color_manual(values = viridis::mako(6))
+RR_validation_plot
+
+
+all_plots<-ggarrange(BM_validation_plot, GP_validation_plot, RR_validation_plot, labels = c("(a)", "(b)", "(c)"))
+all_plots
+ggsave(filename = "all_plots.png", width = 36, height = 25, units = "cm", dpi = 300)
+```
+
+Bland-Altman/Tukey Mean-Difference Plots for total data for Mulato II
+
+```{r fig.height=5, fig.width=8}
+BM_average<- (BM_validation$Observed+BM_validation$Modelled)/2
+BM_average
+BM_differ<- (BM_validation$Observed- BM_validation$Modelled)
+BM_differ
+BM_Blend_plot<-ggplot(BM_validation, aes(x = BM_average, y = BM_differ))+ geom_point(aes(colour = Dataset), size=3.5, alpha=0.8)+
+  geom_hline(yintercept = mean(BM_differ), colour = "black", size = 0.5) +
+  geom_hline(yintercept = mean(BM_differ) - (1.96 * sd(BM_differ)),linetype='dotted', colour = "black"  , size = 0.5) +
+  geom_hline(yintercept = mean(BM_differ) + (1.96 * sd(BM_differ)),linetype='dotted', colour = "black", size = 0.5) +
+ xlab(bquote('Average of measured and simulated forage mass ('*kg~ha^-1*')')) + ylab(bquote('Measured - Simulated ('*kg~ha^-1*')'))+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets"))+ scale_colour_viridis_d()
+BM_Blend_plot
+
+
+GP_average<- (GP_validation$Observed+GP_validation$Modelled)/2
+BM_average
+GP_differ<- (GP_validation$Observed- GP_validation$Modelled)
+GP_differ
+GP_Blend_plot<-ggplot(GP_validation, aes(x = GP_average, y = GP_differ))+ geom_point(aes(colour = Dataset), size=3.5, alpha=0.8)+
+  geom_hline(yintercept = mean(GP_differ), colour = "black", size = 0.5) +
+  geom_hline(yintercept = mean(GP_differ) - (1.96 * sd(GP_differ)),linetype='dotted', colour = "black"  , size = 0.5) +
+  geom_hline(yintercept = mean(GP_differ) + (1.96 * sd(GP_differ)),linetype='dotted', colour = "black", size = 0.5) +
+ xlab(bquote('Average of measured and simulated forage mass ('*kg~ha^-1*')')) + ylab(bquote('Measured - Simulated ('*kg~ha^-1*')'))+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets"))+ scale_colour_viridis_d(option = "plasma")
+GP_Blend_plot
+
+RR_average<- (RR_validation$Observed+RR_validation$Modelled)/2
+RR_average
+RR_differ<- (RR_validation$Observed- RR_validation$Modelled)
+RR_differ
+RR_Blend_plot<-ggplot(RR_validation, aes(x = RR_average, y = RR_differ))+ geom_point(aes(colour = Dataset), size=3.5, alpha=0.8)+
+  geom_hline(yintercept = mean(RR_differ), colour = "black", size = 0.5) +
+  geom_hline(yintercept = mean(RR_differ) - (1.96 * sd(RR_differ)), linetype='dotted', colour = "black"  , size = 0.5) +
+  geom_hline(yintercept = mean(RR_differ) + (1.96 * sd(RR_differ)), linetype='dotted',colour = "black", size = 0.5) +
+ xlab(bquote('Average of measured and simulated forage mass ('*kg~ha^-1*')')) + ylab(bquote('Measured - Simulated ('*kg~ha^-1*')'))+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))+
+  guides(color=guide_legend("Datasets"))+ 
+  scale_color_manual(values = viridis::mako(6))
+RR_Blend_plot
+
+All_Bend_Plot<-ggarrange(BM_Blend_plot, GP_Blend_plot, RR_Blend_plot, labels = c("(a)", "(b)", "(c)"), align = "v")
+All_Bend_Plot
+ggsave(filename = "All_Blend_Plot.png", width = 40, height = 28, units = "cm", dpi = 300)
+```
+
+
+```{r}
+library(ModelMetrics)
+library(Metrics)
+library(hydroGOF)
+library(DescTools)
+
+
+options(digits = 5)      
+Validation_data %>%
+  summarise(RMSE = rmse(Modelled, Observed)
+    ,R2 = cor(Modelled, Observed)^2
+  , BIAS= bias(Modelled, Observed)
+  ,PBIAS=pbias(Modelled, Observed)
+  ,MAE = mae(Modelled, Observed)
+  , MEAN_O = mean(Observed)
+  , MEAN_M= mean(Modelled)
+  , NSE= NSE(Modelled, Observed)
+  , n = n()
+  )
+
+options(digits = 5)      
+Validation_data %>%
+  group_by(Pasture) %>%
+  summarise(RMSE = rmse(Modelled, Observed)
+    ,R2 = cor(Modelled, Observed)^2
+  , BIAS= bias(Modelled, Observed)
+  ,PBIAS=pbias(Modelled, Observed)
+  ,MAE = mae(Modelled, Observed)
+  , MEAN_O = mean(Observed)
+  , MEAN_M= mean(Modelled)
+  , NSE= NSE(Modelled, Observed)
+  , n = n()
+  )
+
+options(digits = 5)      
+BM_validation %>%
+  group_by(Dataset) %>%
+  summarise(RMSE = rmse(Modelled, Observed)
+    ,R2 = cor(Modelled, Observed)^2
+  , BIAS= bias(Modelled, Observed)
+  ,PBIAS=pbias(Modelled, Observed)
+  ,MAE = mae(Modelled, Observed)
+  , MEAN_O = mean(Observed)
+  , MEAN_M= mean(Modelled)
+  , NSE= NSE(Modelled, Observed)
+  , n = n()
+  )
+
+options(digits = 5)      
+GP_validation %>%
+  group_by(Dataset) %>%
+  summarise(RMSE = rmse(Modelled, Observed)
+    ,R2 = cor(Modelled, Observed)^2
+  , BIAS= bias(Modelled, Observed)
+  ,PBIAS=pbias(Modelled, Observed)
+  ,MAE = mae(Modelled, Observed)
+  , MEAN_O = mean(Observed)
+  , MEAN_M= mean(Modelled)
+  , NSE= NSE(Modelled, Observed)
+  , n = n()
+  )
+
+options(digits = 5)      
+RR_validation %>%
+  group_by(Dataset) %>%
+  summarise(RMSE = rmse(Modelled, Observed)
+    ,R2 = cor(Modelled, Observed)^2
+  , BIAS= bias(Modelled, Observed)
+  ,PBIAS=pbias(Modelled, Observed)
+  ,MAE = mae(Modelled, Observed)
+  , MEAN_O = mean(Observed)
+  , MEAN_M= mean(Modelled)
+  , NSE= NSE(Modelled, Observed)
+  , n = n()
+  )
+
+CCC_BM<-CCC(BM_validation$Modelled, BM_validation$Observed, ci = "z-transform", conf.level = 0.95, na.rm = FALSE)
+CCC_BM
+
+CCC_GP<-CCC(GP_validation$Modelled, GP_validation$Observed, ci = "z-transform", conf.level = 0.95, na.rm = FALSE)
+CCC_GP
+
+CCC_RR<-CCC(RR_validation$Modelled, RR_validation$Observed, ci = "z-transform", conf.level = 0.95, na.rm = FALSE)
+CCC_RR
+
+```
+
+N and water stress data analyses
+```{r}
+
+```
+
+
+
+```{r}
+library(viridis)
+
+N_W_stress<-read.csv(file = "/Users/Priya/Documents/OneDrive Massey Lap 09 Sep 2023/Thesis chapeters/DairyMod modelling chapter/N_and_water_stress.csv")
+
+
+
+N_W_strees_BM<- filter(N_W_stress, Pasture== "BM")
+N_W_strees_BM
+
+N_W_strees_GP<- filter(N_W_stress, Pasture== "GP")
+N_W_strees_GP
+
+N_W_strees_RR<- filter(N_W_stress, Pasture== "RR")
+N_W_strees_RR
+
+BM_Plot<-ggplot(N_W_strees_BM, aes(x=GLFN, y=GLFwater, color= Biomass_Difference, shape= Datasets))+
+  geom_point(size=3.5, alpha=0.8) + guides(color = guide_colourbar(order=1),
+         shape = guide_legend(order=2))+
+  scale_color_viridis()+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black"))
+  
+  
+BM_Plot 
+
+
+GP_Plot<-ggplot(N_W_strees_GP, aes(x= GLFN, y=GLFwater, color = Biomass_Difference, shape= Datasets))+ geom_point(size=3.5, alpha=0.8) + guides(color = guide_colourbar(order=1),
+         shape = guide_legend(order=2))+
+  scale_color_viridis()+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black")) 
+  
+  
+GP_Plot
+
+RR_Plot<-ggplot(N_W_strees_RR, aes(GLFN, GLFwater))+
+  geom_point(aes(color = Biomass_Difference, shape= Datasets), size=3.5, alpha=0.8) + guides(color = guide_colourbar(order=1),
+         shape = guide_legend(order=2))+
+  scale_color_viridis()+ 
+  theme(text =element_text(size = 15), panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_rect(colour = "black", fill = NA, size=1), axis.line = element_line(colour = "black")) 
+  
+  
+RR_Plot
+
+
+All_diff_Plot<-ggarrange(BM_Plot, GP_Plot, RR_Plot, labels = c("(a)", "(b)", "(c)"), align = "v", ncol = 3, nrow = 1)
+All_diff_Plot
+ggsave(filename = "All_diff_Plot.png", width = 46, height = 12, units = "cm", dpi = 300)
+
+```
