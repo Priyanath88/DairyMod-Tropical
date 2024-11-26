@@ -1,4 +1,4 @@
-attach(CO2response) //attach the CO2 data file
+attach(CO2response) #attach the CO2 data file
 
 CO2fun_R<-CO2response$CO2R
 co2fun<-CO2response$CO2response
