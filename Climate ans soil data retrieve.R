@@ -1,10 +1,11 @@
+//attach the required packages//
 
-library(nasapower)
-library(apsimx)
-library(soilDB)
+library(nasapower) // reading climate data from the NASAPower data
+library(apsimx)  //Reading data from the APSIM database
+library(soilDB) // reading soil data from U.S. Department of Agriculture Natural Resources Conservation Service (USDA-NRCS) and National Cooperative Soil Survey (NCSS) databases//
 library(ggplot2)
 library(tidyverse)
-library(chirps)
+library(chirps) // reading soil data from CHIRPS database
 
 CLimate_Australia<- get_power(
   community = "ag",
