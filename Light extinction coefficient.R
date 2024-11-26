@@ -5,20 +5,6 @@ attach(Final_Lights_interception_data)
 PAR_LI<-read.csv(file ="/Users/pjayasin/Documents/Litriture/Supervisors documents/From Dave/Gatton Dairy Research data/Final Lights interception data.csv")
 library(dplyr)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Brachiaria_LI<-filter(Final_Lights_interception_data, Pasture=="Brachiaria")
 Brachiaria_LI
 
